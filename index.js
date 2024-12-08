@@ -22,22 +22,6 @@ app.use(
   })
 );
 
-// app.options('*', (req, res) => {
-//   res.header(
-//     'Access-Control-Allow-Origin',
-//     process.env.NETLIFY_URL || 'http://localhost:3000'
-//   );
-//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   res.sendStatus(204);
-// });
-
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
-
 // Session Options
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || 'kanbas',
@@ -78,6 +62,11 @@ const PORT = process.env.PORT || 4000;
 console.log('ENV Variables:', process.env);
 console.log('Server configured for:', process.env.REMOTE_SERVER);
 console.log('Server configured for:', process.env.NODE_SERVER_DOMAIN);
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
 // Start Server
 app.listen(PORT, () => {
