@@ -102,7 +102,7 @@ export default function UserRoutes(app) {
   //   res.status(201).json(user);
   // };
   // app.post("/api/users", createUser);
-  
+
 
   // const deleteUser = (req, res) => {
   //   const { userId } = req.params;
@@ -114,13 +114,13 @@ export default function UserRoutes(app) {
   //   }
   // };
   // app.delete("/api/users/:userId", deleteUser);
-  
+
   const findAllUsers = (req, res) => {
     const users = dao.findAllUsers();
     res.json(users);
   };
   app.get("/api/users", findAllUsers);
-  
+
 
   const findUserById = (req, res) => {
     const { userId } = req.params;
@@ -132,22 +132,28 @@ export default function UserRoutes(app) {
     }
   };
   app.get("/api/users/:userId", findUserById);
-  
+
   // Account related
   const signin = (req, res) => {
-    const { username, password } = req.body;
-    const currentUser = dao.findUserByCredentials(username, password);
+    try {
+      const { username, password } = req.body;
+      console.log('POST /api/users/signin called with:', username, password);
 
-    console.log('POST /api/users/signin called');
-    res.status(200).send('Signin endpoint working');
+      const currentUser = dao.findUserByCredentials(username, password);
+      console.log('Current user:', currentUser);
 
-    if (currentUser) {
-      req.session["currentUser"] = currentUser;
-      res.json(currentUser);
-    } else {
-      res.status(401).json({ message: "Unable to login. Try again later." });
+      if (currentUser) {
+        req.session["currentUser"] = currentUser;
+        return res.status(200).json(currentUser);
+      } else {
+        return res.status(401).json({ message: "Unable to login. Try again later." });
+      }
+    } catch (error) {
+      console.error('Error in signin:', error);
+      return res.status(500).json({ message: "Internal server error" });
     }
   };
+
 
   app.post("/api/users/signin", signin);
 
@@ -211,10 +217,10 @@ export default function UserRoutes(app) {
   // };
   // app.post("/api/users/current/courses", createCourse);
 
-  
+
   // app.get('/api/users', (req, res) => {
   //   console.log('GET /api/users request received');
   //   res.json({ message: 'Users endpoint is working!' });
   // });
-  
+
 }
