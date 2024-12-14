@@ -11,10 +11,12 @@ import CourseRoutes from './Kanbas/Courses/routes.js';
 import ModuleRoutes from './Kanbas/Modules/routes.js';
 import AssignmentRoutes from './Kanbas/Assignments/routes.js';
 import EnrollmentsRoutes from './Kanbas/Enrollments/routes.js';
-import PeopleRoutes from './Kanbas/People/routes.js';
 
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kanbas"
-mongoose.connect(CONNECTION_STRING);
+mongoose.connect(CONNECTION_STRING)
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch((error) => console.error('MongoDB connection error:', error));
+
 const app = express();
 
 // CORS Configuration
@@ -74,21 +76,13 @@ CourseRoutes(app);
 EnrollmentsRoutes(app);
 ModuleRoutes(app);
 UserRoutes(app);
-PeopleRoutes(app);
+// PeopleRoutes(app);
 
 const PORT = process.env.PORT || 4000;
 
 // Debug
 console.log('Server configured for:', process.env.REMOTE_SERVER);
 console.log('Server configured for:', process.env.NODE_SERVER_DOMAIN || 'Localhost');
-
-mongoose.connection.on('connected', () => {
-  console.log('MongoDB connected successfully');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('Error connecting to MongoDB:', err);
-});
 
 // Start Server
 app.listen(PORT, () => {

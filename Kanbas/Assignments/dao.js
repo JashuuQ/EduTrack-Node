@@ -1,37 +1,48 @@
-import Database from "../Database/index.js";
+// import Database from "../Database/index.js";
+import model from "./model.js";
 
-Database.assignments = Database.assignments || [];
-
-// Create
-export function createAssignment(req, res) {
-  const { title, description, dueDate, courseId } = req.body;
-  if (!title || !description || !dueDate || !courseId) {
-    return res.status(400).json({ error: "Missing required fields." });
-  }
-  const newAssignment = { ...req.body, _id: Date.now().toString() };
-  Database.assignments = [...Database.assignments, newAssignment];
-  console.log("New assignment created:", newAssignment);
-  res.status(201).json(newAssignment);
+export async function updateAssignment(assignmentId, assignmentUpdate) {
+  // const { assignments } = Database;
+  // const assignment = assignments.find((assignment) => assignment._id === assignmentId);
+  // if (!assignment) {
+  //   throw new Error(`Assignment with ID ${assignmentId} not found.`);
+  // }
+  // Object.assign(assignment, assignmentUpdate);
+  // return assignment;
+  return await model.updateOne({_id: assignmentId}, { $set: assignmentUpdate });
 }
 
-// Retrieve
-export function findAllAssignments() {
-  console.log("Database Assignments:", Database.assignments);
-  return Database.assignments;
-}
-
-// Update
-export function updateAssignment(assignmentId, assignmentUpdates) {
-  const assignment = Database.assignments.find((a) => a._id === assignmentId);
-  if (!assignment) {
-    throw new Error(`Assignment with ID ${assignmentId} not found.`);
-  }
-  Object.assign(assignment, assignmentUpdates);
-  return assignment;
-}
-
-// Delete
 export function deleteAssignment(assignmentId) {
-  Database.assignments = Database.assignments.filter((a) => a._id !== assignmentId);
+  // const { assignments } = Database;
+  // const assignmentExists = assignments.some((assignment) => assignment._id === assignmentId);
+  // if (!assignmentExists) {
+  //   throw new Error(`Assignment with ID ${assignmentId} not found.`);
+  // }
+  // Database.assignments = assignments.filter((assignment) => assignment._id !== assignmentId);
+  // return { success: true };
+  return model.deleteOne({ _id: assignmentId });
 }
 
+export function createAssignment(assignment) {
+  // const newAssignment = { ...assignment, _id: Date.now().toString() };
+  // Database.assignments = [...Database.assignments, newAssignment];
+  // return newAssignment;
+  delete assignment._id;
+  return model.create(assignment);
+}
+
+export async function findAssignmentsForCourse(courseId) {
+  // const { assignments } = Database;
+  // return assignments.filter((assignment) => assignment.course === courseId);
+  return await model.find({ course: courseId });
+}
+
+export async function findAssignmentById(assignmentId) {
+  // const { assignments } = Database;
+  // const assignment = assignments.find((assignment) => assignment._id === assignmentId);
+  // if (!assignment) {
+  //   throw new Error(`Assignment with ID ${assignmentId} not found.`);
+  // }
+  // return assignment;
+  return await model.findOne({ _id: assignmentId});
+}
