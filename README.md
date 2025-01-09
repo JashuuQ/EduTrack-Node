@@ -1,1 +1,1 @@
-# kanbas-node-server-app
+# Node for EduTrack
